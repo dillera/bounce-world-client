@@ -24,6 +24,9 @@ endef
 
 CFLAGS += -Osir
 
+# Add library search paths for linking
+LDFLAGS += $(foreach lib, $(LIBS), --lib-path $(dir $(lib)))
+
 $(OBJDIR)/$(CURRENT_TARGET)/%.o: %.c $(VERSION_FILE) | $(OBJDIR)
 	@$(call MKDIR,$(dir $@))
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
@@ -34,4 +37,4 @@ $(OBJDIR)/$(CURRENT_TARGET)/%.o: %.s $(VERSION_FILE) | $(OBJDIR)
 
 
 $(BUILD_DIR)/$(PROGRAM_TGT): $(OBJECTS) $(LIBS) | $(BUILD_DIR)
-	$(CC) -t $(CURRENT_TARGET) $(LDFLAGS) -o $@ $^
+	$(CC) -t $(CURRENT_TARGET) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
