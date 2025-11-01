@@ -5,7 +5,6 @@
         .export         _is_alt_screen
 
         .importzp       ptr1
-        .macpack        cpu
 
 TEXTLN_HI = $29
 SHOW_SCR1 = $C054
