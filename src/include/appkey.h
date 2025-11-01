@@ -1,6 +1,8 @@
 #ifndef BWC_APPKEY_H
 #define  BWC_APPKEY_H
 
+#define DEFAULT_ENDPOINT "bouncy.diller.org:6502"
+
 #ifndef _CMOC_VERSION_
 #include <stdbool.h>
 #include <stdint.h>

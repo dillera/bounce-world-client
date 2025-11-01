@@ -141,7 +141,7 @@ void show_header() {
 void get_default_server(char *s) {
   bool r = read_appkey(s, ENDPOINT_LEN, APP_KEY_ENDPOINT);
   if (!r) {
-    *s = '\0';
+    strcpy(s, DEFAULT_ENDPOINT);
   }
 }
 
@@ -153,7 +153,7 @@ void get_default_name(char *s) {
 }
 
 void show_server(char *s) {
-  cputsxy(txp, yps + 10, "Bounce Server URL:");
+  cputsxy(txp, yps + 10, "Bouncy Server URL:");
   cputsxy(txp, yps + 11, "> ");
   cputsxy(txp + 2, yps + 11, s);
 }
