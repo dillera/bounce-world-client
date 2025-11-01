@@ -1,33 +1,24 @@
 FUJINET_LIB_VERSION := 4.8.0
 
+# Use locally built fujinet-lib instead of downloading from GitHub
+FUJINET_LIB_LOCAL_BUILD := /Users/dillera/code/fujinet-lib/build
 FUJINET_LIB = $(CACHE_DIR)/fujinet-lib
 FUJINET_LIB_VERSION_DIR = $(FUJINET_LIB)/$(FUJINET_LIB_VERSION)-$(CURRENT_TARGET)
 FUJINET_LIB_PATH = $(FUJINET_LIB_VERSION_DIR)/fujinet-$(CURRENT_TARGET)-$(FUJINET_LIB_VERSION).lib
-FUJINET_LIB_DOWNLOAD_URL = https://github.com/FujiNetWIFI/fujinet-lib/releases/download/v$(FUJINET_LIB_VERSION)/fujinet-lib-$(CURRENT_TARGET)-$(FUJINET_LIB_VERSION).zip
-FUJINET_LIB_DOWNLOAD_FILE = $(FUJINET_LIB)/fujinet-lib-$(CURRENT_TARGET)-$(FUJINET_LIB_VERSION).zip
 FUJINET_LIB_BASENAME := $(notdir $(FUJINET_LIB_PATH))
 FUJINET_LIB_SYMLINK  := libfujinet-$(CURRENT_TARGET)-$(FUJINET_LIB_VERSION).lib.a
 
 $(info CACHE_DIR = $(CACHE_DIR))
-$(info FUJINET_LIB_DOWNLOAD_FILE = $(FUJINET_LIB_DOWNLOAD_FILE))
+$(info Using locally built fujinet-lib from $(FUJINET_LIB_LOCAL_BUILD))
 
 .get_fujinet_lib:
-	@if [ ! -f "$(FUJINET_LIB_DOWNLOAD_FILE)" ]; then \
-		if [ -d "$(FUJINET_LIB_VERSION_DIR)" ]; then \
-			echo "A directory already exists with version $(FUJINET_LIB_VERSION) - please remove it first"; \
-			exit 1; \
-		fi; \
-		HTTPSTATUS=$$(curl -Is $(FUJINET_LIB_DOWNLOAD_URL) | head -n 1 | awk '{print $$2}'); \
-		if [ "$${HTTPSTATUS}" == "404" ]; then \
-			echo "ERROR: Unable to find file $(FUJINET_LIB_DOWNLOAD_URL)"; \
-			exit 1; \
-		fi; \
-		echo "Downloading fujinet-lib for $(CURRENT_TARGET) version $(FUJINET_LIB_VERSION) from $(FUJINET_LIB_DOWNLOAD_URL)"; \
-		mkdir -p $(FUJINET_LIB); \
-		curl -sL $(FUJINET_LIB_DOWNLOAD_URL) -o $(FUJINET_LIB_DOWNLOAD_FILE); \
-		echo "Unzipping to $(FUJINET_LIB_VERSION_DIR)"; \
-		unzip -o $(FUJINET_LIB_DOWNLOAD_FILE) -d $(FUJINET_LIB_VERSION_DIR); \
-		echo "Unzip complete."; \
+	@if [ ! -f "$(FUJINET_LIB_PATH)" ]; then \
+		echo "Setting up fujinet-lib for $(CURRENT_TARGET) from local build"; \
+		mkdir -p $(FUJINET_LIB_VERSION_DIR); \
+		cp $(FUJINET_LIB_LOCAL_BUILD)/fujinet.lib.$(CURRENT_TARGET) $(FUJINET_LIB_PATH); \
+		cp $(FUJINET_LIB_LOCAL_BUILD)/../fujinet-*.h $(FUJINET_LIB_VERSION_DIR)/ 2>/dev/null || true; \
+		cp $(FUJINET_LIB_LOCAL_BUILD)/../fujinet-*.inc $(FUJINET_LIB_VERSION_DIR)/ 2>/dev/null || true; \
+		echo "Copied $(FUJINET_LIB_PATH) and headers"; \
 	fi; \
 	if [ "$(CURRENT_TARGET)" == "coco" ]; then \
 		( cd "$(FUJINET_LIB_VERSION_DIR)" && ln -sf "$(FUJINET_LIB_BASENAME)" "$(FUJINET_LIB_SYMLINK)" ); \
