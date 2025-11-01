@@ -27,6 +27,9 @@ CFLAGS += -Osir
 # Add library search paths for linking
 LDFLAGS += $(foreach lib, $(LIBS), --lib-path $(dir $(lib)))
 
+# Add cc65 lib directory to search path to ensure runtime library can be found
+LDFLAGS += --lib-path /usr/local/share/cc65/lib
+
 $(OBJDIR)/$(CURRENT_TARGET)/%.o: %.c $(VERSION_FILE) | $(OBJDIR)
 	@$(call MKDIR,$(dir $@))
 	$(CC) -t $(CURRENT_TARGET) -c --create-dep $(@:.o=.d) $(CFLAGS) -o $@ $<
@@ -37,4 +40,4 @@ $(OBJDIR)/$(CURRENT_TARGET)/%.o: %.s $(VERSION_FILE) | $(OBJDIR)
 
 
 $(BUILD_DIR)/$(PROGRAM_TGT): $(OBJECTS) $(LIBS) | $(BUILD_DIR)
-	$(CC) -t $(CURRENT_TARGET) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+	$(CC) -t $(CURRENT_TARGET) $(LDFLAGS) --mapfile $@.map -o $@ $(OBJECTS) $(LIBS)

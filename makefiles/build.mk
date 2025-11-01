@@ -23,10 +23,13 @@ SOURCES += $(wildcard $(SRCDIR)/*.asm)
 # allow for a src/common/ dir and recursive subdirs
 ifeq ($(CURRENT_TARGET),pmd85)
 SOURCES += $(call rwildcard,$(SRCDIR)/common/,*.asm)
+else ifeq ($(CURRENT_TARGET),coco)
+# coco uses cmoc which doesn't handle assembly files like cc65 does
+SOURCES += $(call rwildcard,$(SRCDIR)/common/,*.c)
 else
 SOURCES += $(call rwildcard,$(SRCDIR)/common/,*.s)
-endif
 SOURCES += $(call rwildcard,$(SRCDIR)/common/,*.c)
+endif
 
 # allow src/<platform>/ and its recursive subdirs
 ifeq ($(CURRENT_TARGET),pmd85)
